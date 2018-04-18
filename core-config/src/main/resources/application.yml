@@ -1,0 +1,15 @@
+test: qww
+
+project:
+  name: test
+  active: prod
+  port: 8080
+
+user:
+  names:
+    - cxy
+    - chang常
+
+
+abs:
+  abs: 1
