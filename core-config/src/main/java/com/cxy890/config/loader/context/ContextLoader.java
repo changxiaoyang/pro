@@ -1,4 +1,4 @@
-package com.cxy890.config.loader;
+package com.cxy890.config.loader.context;
 
 import java.io.File;
 import java.net.JarURLConnection;
@@ -21,13 +21,18 @@ public class ContextLoader {
     private static final String JAR = "jar";
 
     /**
+     * 加载框架配置
+     */
+    public static boolean loadFramework() {
+        return true;
+    }
+
+    /**
      * 获取某包下所有类
      *
      * @param packageName  包名
      */
-    public static void load(String packageName) {
-//        System.out.println(Server.class.getProtectionDomain().toString());
-
+    public static boolean loadApplication(String packageName) {
         ClassLoader loader = Thread.currentThread().getContextClassLoader();
         String packagePath = packageName.replace(".", "/");
         URL url = loader.getResource(".");
@@ -39,6 +44,7 @@ public class ContextLoader {
                 loadFromJar(url, loader);
             }
         }
+        return true;
     }
 
     /**

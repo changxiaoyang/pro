@@ -1,4 +1,4 @@
-package com.cxy890.config.loader;
+package com.cxy890.config.loader.context;
 
 import com.cxy890.config.annotation.AutoAssign;
 import com.cxy890.config.annotation.AutoScan;

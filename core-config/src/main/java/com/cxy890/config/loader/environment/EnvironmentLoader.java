@@ -45,7 +45,7 @@ public class EnvironmentLoader {
         propList.forEach(inputStream -> {
             try {
                 Properties props = new Properties();
-                props.load(inputStream);
+                props.loadApplication(inputStream);
                 for (Object key : props.keySet()) {
                     String value = new String(props.getProperty(key.toString()).getBytes("ISO-8859-1"), "utf-8");
                     putProp(key.toString(), value);

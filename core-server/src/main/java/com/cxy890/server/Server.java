@@ -9,6 +9,7 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import lombok.extern.slf4j.Slf4j;
 
+
 /**
  * @author BD-PC27
  */
@@ -35,7 +36,7 @@ public class Server {
 
             ChannelFuture sync = bootstrap.bind(port).sync();
             log.info("Server started on port : " + port);
-            sync.channel() .closeFuture().sync();
+            sync.channel().closeFuture().sync();
         } catch (InterruptedException e) {
             log.error("Server start error, message : ", e);
         } finally {
@@ -43,5 +44,13 @@ public class Server {
             workerGroup.shutdownGracefully();
         }
     }
+
+    public static void main(String[] args) {
+        new Server(8080).run();
+    }
+
+
+
+
 
 }
