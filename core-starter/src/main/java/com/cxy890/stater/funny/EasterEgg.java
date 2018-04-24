@@ -2,24 +2,21 @@ package com.cxy890.stater.funny;
 
 import com.cxy890.config.util.StringUtil;
 import lombok.Cleanup;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.*;
 
 /**
  * @author BD-PC27
  */
+@Slf4j
 public class EasterEgg {
 
-    /**
-     * keep mysterious
-     */
-    private final static String banner = "ddRddRddyddxddxddxddxddxddxddyddyddxddxddxddxddxddxddyddyddxddxddxddxddxddxddy" +
-            "ddZddRddRddRdgdd4NddyddxddxddyddRdgddgdd4PddyddxddxddyddRdgddgdd4UddyddxddxddyddRdgdddZddRddRddRdgdddRddzdd" +
-            "pd4MddzddRdgddgdddRddzddpd4MddzddRdgddgdddRddOd4MddpddoddRdgdddZddRddRddRdgdddRddzd4MddpddzddRdgddgdddRddOd" +
-            "4Sd4SddoddRdgddgdddRddzd4MddpddzddRdgdddZddRddRddRdgdddRddLddxddxddLd4NdgddgdddRddLddxddxddLd4PdgddgdddRddL" +
-            "ddxddxddLd4UdgdddZddRddRddRd4TddxddxddxddxddxddxddLd4TddxddxddxddxddxddxddLd4TddxddxddxddxddxddxddL";
+    public static void printBanner() {
+        log.info(EasterEgg.getBanner());
+    }
 
-    public static String getBanner() {
+    private static String getBanner() {
         String bnr;
         if ((bnr = getFromFile()) != null) return bnr;
         return StringUtil.decode(banner);
@@ -42,5 +39,15 @@ public class EasterEgg {
         }
         return null;
     }
+
+    /**
+     * keep mysterious
+     */
+    private final static String banner = "  ============= Welcome, my little darling. ============= \n\r"
+            + "ddRddRddyddxddxddxddxddxddxddyddyddxddxddxddxddxddxddyddyddxddxddxddxddxddxddy" +
+            "ddZddRddRddRdgdd4NddyddxddxddyddRdgddgdd4PddyddxddxddyddRdgddgdd4UddyddxddxddyddRdgdddZddRddRddRdgdddRddzdd" +
+            "pd4MddzddRdgddgdddRddzddpd4MddzddRdgddgdddRddOd4MddpddoddRdgdddZddRddRddRdgdddRddzd4MddpddzddRdgddgdddRddOd" +
+            "4Sd4SddoddRdgddgdddRddzd4MddpddzddRdgdddZddRddRddRdgdddRddLddxddxddLd4NdgddgdddRddLddxddxddLd4PdgddgdddRddL" +
+            "ddxddxddLd4UdgdddZddRddRddRd4TddxddxddxddxddxddxddLd4TddxddxddxddxddxddxddLd4TddxddxddxddxddxddxddL";
 
 }

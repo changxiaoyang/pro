@@ -3,9 +3,9 @@ package com.cxy890.config;
 import com.cxy890.config.annotation.AutoAssign;
 import com.cxy890.config.annotation.CxyConfig;
 import com.cxy890.config.annotation.Value;
-import com.cxy890.config.runner.Runner;
 import com.cxy890.config.util.StringUtil;
 import com.cxy890.server.Server;
+import com.cxy890.server.runner.Runner;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
@@ -92,10 +92,7 @@ public class GlobalCxyConfig {
     /**
      * 启动 summer web server
      */
-    public static void startServer(Class<?> clazz) {
-        String classpath = clazz.getResource("/").getPath();
-        classpath = classpath.replace("/", "\\").replaceFirst("\\\\", "");
-//        new CxyServer(classpath + "static").start();
+    public static void startServer() {
         new Server(8080).run();
     }
 
@@ -105,7 +102,7 @@ public class GlobalCxyConfig {
     public static void runnerStart(){
         if (runnerClass.size() > 0)
             for (Runner runner : runnerClass)
-                runner.run();
+                new Thread(runner::run).start();
     }
 
     /**

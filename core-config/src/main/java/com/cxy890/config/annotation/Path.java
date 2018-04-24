@@ -6,14 +6,12 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * 通过此注解赋值
- *
- * Created by ChangXiaoyang on 2017/5/17.
+ * @author BD-PC27
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface AutoAssign {
+public @interface Path {
 
-    String value() default "";
+    String value() default "/";
 
 }

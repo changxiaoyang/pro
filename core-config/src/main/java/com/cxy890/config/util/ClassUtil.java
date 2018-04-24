@@ -9,6 +9,7 @@ import java.net.URLDecoder;
 import java.util.Enumeration;
 import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
@@ -18,6 +19,17 @@ import java.util.jar.JarFile;
  * Created by ChangXiaoyang on 2017/8/12.
  */
 public final class ClassUtil {
+
+    public static boolean ifExist(String className, Consumer<Class<?>> consumer) {
+        try {
+            Class<?> aClass = Class.forName(className);
+            consumer.accept(aClass);
+            return true;
+        } catch (ClassNotFoundException e) {
+            return false;
+        }
+    }
+
 
     /**
      * 获取包下的所有class

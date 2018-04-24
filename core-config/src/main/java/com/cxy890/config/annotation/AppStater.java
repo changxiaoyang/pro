@@ -8,7 +8,7 @@ import java.lang.annotation.Target;
 /**
  * @author BD-PC27
  */
-@Target(ElementType.METHOD)
+@Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface AppStater {
 

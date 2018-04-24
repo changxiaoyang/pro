@@ -1,5 +1,8 @@
 package com.cxy890.config.loader.context;
 
+import com.cxy890.config.util.ClassUtil;
+import com.cxy890.server.filter.Filter;
+
 import java.io.File;
 import java.net.JarURLConnection;
 import java.net.URL;
@@ -69,17 +72,7 @@ public class ContextLoader {
                     childFilePath = childFilePath.substring(childFilePath.indexOf("\\classes") + 9, childFilePath.lastIndexOf("."));
                     childFilePath = childFilePath.replace("\\", ".");
                     myClassName.add(childFilePath);
-                    try {
-                        CxyContext.addClass(Class.forName(childFilePath));
-                    } catch (ClassNotFoundException e) {
-                        e.printStackTrace();
-                    }
-                }
-                if (childFilePath.endsWith(".properties")) {
-                    childFilePath = childFilePath.substring(childFilePath.indexOf("\\classes") + 9);
-                    childFilePath = childFilePath.replace("\\", ".");
-                    myClassName.add(childFilePath);
-                    CxyContext.addProp(loader.getResourceAsStream(childFilePath));
+                    ClassUtil.ifExist(childFilePath, CxyContext::addClass);
                 }
             }
         }
@@ -93,7 +86,6 @@ public class ContextLoader {
      * @param url jar URL
      */
     private static void loadFromJar(URL url, ClassLoader loader) {
-
         try {
             JarURLConnection jarURLConnection = (JarURLConnection) url.openConnection();
             JarFile jarFile = jarURLConnection.getJarFile();
@@ -106,8 +98,6 @@ public class ContextLoader {
                         entryName = entryName.replace("/", ".").substring(0, entryName.lastIndexOf("."));
                         CxyContext.addClass(Class.forName(entryName));
                     }
-                } else if (entryName.endsWith(".properties")) {
-                    CxyContext.addProp(loader.getResourceAsStream(entryName));
                 }
             }
         } catch (Exception e) {

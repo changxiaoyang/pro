@@ -1,4 +1,4 @@
-package com.cxy890.config.runner;
+package com.cxy890.server.runner;
 
 /**
  * Runner 预留启动拓展类

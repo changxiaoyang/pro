@@ -36,8 +36,8 @@ public class ApplicationStater {
         before();
         log.info(String.format("Prepare complete, use time :%s ms", watch.issueAndReset()));
 
-        GlobalCxyConfig.startServer(mainClass);
-        GlobalCxyConfig.runnerStart();
+        CxyContext.startServer();
+        CxyContext.runnerStart();
         log.info(String.format("Server started, use time :%s ms", watch.issueAndReset()));
     }
 
@@ -46,7 +46,7 @@ public class ApplicationStater {
     }
 
     private void before() throws IOException {
-        log.info("Welcome \n\r" + EasterEgg.getBanner());
+        EasterEgg.printBanner();
         if (EnvironmentLoader.load())
             log.info("Environment loadApplication complete");
 
@@ -59,10 +59,6 @@ public class ApplicationStater {
         CxyContext.initBeans();
     }
 
-    public static void main(String[] args) throws Throwable {
-        start(ApplicationStater.class, args);
-    }
-
     private String getBasePath() {
         String baseScanPackage = null;
         if (mainClass.isAnnotationPresent(AppStater.class)) {
@@ -72,6 +68,10 @@ public class ApplicationStater {
         if (StringUtil.isNull(baseScanPackage))
             baseScanPackage = mainClass.getPackage().getName();
         return baseScanPackage;
+    }
+
+    public static void main(String[] args) throws Throwable {
+        start(ApplicationStater.class, args);
     }
 
 }
