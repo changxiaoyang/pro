@@ -2,6 +2,7 @@ package com.cxy890.server.handler;
 
 import com.cxy890.server.filter.PathRegister;
 import com.cxy890.server.util.ByteUtil;
+import com.cxy890.server.util.MethodUtil;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -9,7 +10,6 @@ import io.netty.handler.codec.http.*;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
-import java.lang.reflect.Method;
 
 import static io.netty.handler.codec.http.HttpHeaderNames.CONTENT_LENGTH;
 import static io.netty.handler.codec.http.HttpHeaderNames.CONTENT_TYPE;
@@ -24,6 +24,7 @@ import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 @Slf4j
 public class ServerHandler extends ChannelInboundHandlerAdapter {
 
+
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         if (!(msg instanceof FullHttpRequest)) return;
@@ -34,14 +35,10 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
             returnIco(ctx);
             return;
         }
-        HttpMethod httpMethod = httpRequest.method();
-        log.debug(path + "  " + httpMethod);
-        Method method = PathRegister.getMethod(path);
-        Object invoke = method.invoke(PathRegister.getInstance(path));
 
+        String result = MethodUtil.invokeAsString(httpRequest);
         FullHttpResponse response = new DefaultFullHttpResponse(
-                HTTP_1_1, OK, Unpooled.wrappedBuffer(invoke.toString()
-                .getBytes()));
+                HTTP_1_1, OK, Unpooled.wrappedBuffer(result.getBytes("GBK")));
         response.headers().set(CONTENT_TYPE, "text/plain");
         response.headers().set(CONTENT_LENGTH,
                 response.content().readableBytes());
@@ -67,5 +64,7 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
         response.headers().set("Connection", HttpHeaderValues.KEEP_ALIVE);
         ctx.writeAndFlush(response);
     }
+
+
 
 }

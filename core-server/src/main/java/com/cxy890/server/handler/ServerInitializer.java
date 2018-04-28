@@ -6,6 +6,10 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpRequestDecoder;
 import io.netty.handler.codec.http.HttpResponseEncoder;
+import io.netty.handler.codec.string.StringDecoder;
+import io.netty.handler.codec.string.StringEncoder;
+
+import java.nio.charset.Charset;
 
 /**
  * @author BD-PC27
@@ -20,6 +24,8 @@ public class ServerInitializer extends ChannelInitializer<SocketChannel> {
         // 字符串解码 和 编码
         pipeline.addLast("decoder", new HttpRequestDecoder());
         pipeline.addLast("encoder", new HttpResponseEncoder());
+//        pipeline.addLast(new StringEncoder(Charset.forName("GBK")));
+//        pipeline.addLast(new StringDecoder(Charset.forName("UTF-8")));
         pipeline.addLast("aggregator", new HttpObjectAggregator(10 * 1024 * 1024));
 
         // 自己的逻辑Handler

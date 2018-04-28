@@ -2,6 +2,7 @@ package com.cxy890.config.loader.context;
 
 import com.cxy890.config.annotation.AutoAssign;
 import com.cxy890.config.annotation.AutoScan;
+import com.cxy890.config.annotation.Param;
 import com.cxy890.config.annotation.Path;
 import com.cxy890.config.loader.environment.EnvironmentLoader;
 import com.cxy890.config.util.ObjectUtil;
@@ -96,7 +97,7 @@ public class CxyContext {
 
     private static Object injectClass(Class<?> clazz) throws IllegalAccessException, InstantiationException, InvocationTargetException {
         String lowerBeanName = StringUtil.firstToLower(clazz.getSimpleName());
-        if (beanExist(StringUtil.firstToLower(clazz.getSimpleName()))) {
+        if (beanExist(lowerBeanName)) {
             return beanContext.get(lowerBeanName);
         }
         Object instance = clazz.newInstance();
@@ -106,7 +107,15 @@ public class CxyContext {
         for (Method method : declaredMethods) {
             if (method.isAnnotationPresent(Path.class)) {
                 String path = method.getAnnotation(Path.class).value();
-                PathRegister.register(path, instance, method);
+
+                Parameter[] parameters = method.getParameters();
+                List<String> paramNames = new ArrayList<>();
+                for (Parameter parameter : parameters) {
+                    Param annotation = parameter.getAnnotation(Param.class);
+                    paramNames.add(annotation.value());
+                }
+
+                PathRegister.register(path, instance, method, paramNames);
                 continue;
             }
             if (method.isAnnotationPresent(AutoAssign.class)) {
@@ -117,7 +126,7 @@ public class CxyContext {
                 }
                 Object[] params = new Object[parameters.length];
                 for (int i = 0; i < parameters.length; i++) {
-                    String name = parameters[i].getName();
+                    String name = parameters[i].getType().getSimpleName();
                     Object bean = beanContext.get(name);
                     if (bean == null) {
                         bean = injectClass(parameters[i].getType());

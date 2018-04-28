@@ -1,11 +1,16 @@
 package com.cxy890.config.util;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 /**
  * String 操作工具类
  *
  * Created by ChangXiaoyang on 2017/5/18.
  */
 public final class StringUtil {
+
+    private static ObjectMapper mapper = new ObjectMapper();
 
     /**
      * 首字母小写
@@ -20,6 +25,14 @@ public final class StringUtil {
         if (('a' <= chars[0] && chars[0] <= 'z') || (('A' <= chars[0] && chars[0] <= 'Z')))
             chars[0] = (char) (chars[0] - 'A' + 'a');
         return String.valueOf(chars);
+    }
+
+    public static String toJson(Object o) {
+        try {
+            return mapper.writeValueAsString(o);
+        } catch (JsonProcessingException e) {
+            return "{}";
+        }
     }
 
     /**
