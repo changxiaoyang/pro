@@ -1,5 +1,6 @@
 package com.cxy890.config.loader.context;
 
+import com.cxy890.config.ConfigKeys;
 import com.cxy890.config.annotation.AutoAssign;
 import com.cxy890.config.annotation.AutoScan;
 import com.cxy890.config.annotation.Param;
@@ -92,7 +93,8 @@ public class CxyContext {
      * 启动 summer web server
      */
     public static void startServer() {
-        new Server(8080).run();
+        Object port = EnvironmentLoader.get(ConfigKeys.APPLICATION_PORT);
+        new Server((port == null) ? 8080 : (int) port).run();
     }
 
     private static Object injectClass(Class<?> clazz) throws IllegalAccessException, InstantiationException, InvocationTargetException {

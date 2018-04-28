@@ -7,9 +7,9 @@ package com.cxy890.config;
  */
 public interface ConfigKeys {
 
-    String APPLICATION_PORT = "application.port";
-    String APPLICATION_NAME = "application.name";
-    String APPLICATION_ACTIVE = "application.active";
+    String APPLICATION_PORT = "project.port";
+    String APPLICATION_NAME = "project.name";
+    String APPLICATION_ACTIVE = "project.active";
 
     String HOSTS_NAME = "hosts.name";
 
