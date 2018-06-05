@@ -118,7 +118,9 @@ public class GlobalCxyConfig {
                 if (field.isAnnotationPresent(Value.class)) {
                     Value value = field.getAnnotation(Value.class);
                     field.setAccessible(true);
-                    field.set(instance, prop.get(value.value()));
+                    String v = prop.get(value.value());
+                    if (!StringUtil.isNull(v))
+                        field.set(instance, v);
                 }
                 if (field.isAnnotationPresent(AutoAssign.class)) {
                     String beanName = StringUtil.firstToLower(field.getType().getSimpleName());

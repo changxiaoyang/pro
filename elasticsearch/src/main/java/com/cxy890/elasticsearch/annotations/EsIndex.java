@@ -1,4 +1,4 @@
-package com.cxy890.config.annotation;
+package com.cxy890.elasticsearch.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -6,14 +6,18 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * 通过此注解获取配置文件的值
- *
- * Created by ChangXiaoyang on 2017/5/17.
+ * @author BD-PC27
  */
-@Deprecated
-@Target(ElementType.FIELD)
+@Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Value {
+public @interface EsIndex {
 
     String value() default "";
+
+    String type() default "";
+
+    int shards() default 10;
+
+    int replicas() default 1;
+
 }

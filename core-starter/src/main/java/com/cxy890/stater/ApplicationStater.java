@@ -11,6 +11,7 @@ import com.cxy890.stater.support.SimpleStopWatch;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
+import java.lang.annotation.Annotation;
 
 /**
  * @author BD-PC27
@@ -52,6 +53,10 @@ public class ApplicationStater {
 
         if (ContextLoader.loadFramework())
             log.info("Framework configuration load complete");
+        Annotation[] annotations = this.mainClass.getAnnotations();
+        for (Annotation annotation : annotations)
+            if (ContextLoader.loadImport(annotation))
+                log.info("Import configuration load complete");
 
         if (ContextLoader.loadApplication(getBasePath()))
             log.info("Application configuration load complete");

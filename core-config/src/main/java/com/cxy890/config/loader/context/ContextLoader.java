@@ -1,9 +1,12 @@
 package com.cxy890.config.loader.context;
 
+import com.cxy890.config.annotation.Import;
 import com.cxy890.config.util.ClassUtil;
 import com.cxy890.server.filter.Filter;
 
 import java.io.File;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.AnnotatedType;
 import java.net.JarURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
@@ -27,6 +30,21 @@ public class ContextLoader {
      * 加载框架配置
      */
     public static boolean loadFramework() {
+        return true;
+    }
+
+    /**
+     * 获取某包下所有类
+     */
+    public static boolean loadImport(Annotation annotation) {
+        Class<? extends Annotation> aClass = annotation.annotationType();
+        if (aClass.isAnnotationPresent(Import.class)) {
+            Import anImport = aClass.getAnnotation(Import.class);
+            Class<?>[] value = anImport.value();
+            for (Class c : value) {
+                CxyContext.addClass(c);
+            }
+        }
         return true;
     }
 
