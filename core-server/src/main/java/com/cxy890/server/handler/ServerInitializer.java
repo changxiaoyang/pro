@@ -19,13 +19,8 @@ public class ServerInitializer extends ChannelInitializer<SocketChannel> {
     @Override
     protected void initChannel(SocketChannel socketChannel) throws Exception {
         ChannelPipeline pipeline = socketChannel.pipeline();
-        // 以("\n")为结尾分割的 解码器
-//         pipeline.addLast("framer", new DelimiterBasedFrameDecoder(8192, Delimiters.lineDelimiter()));
-        // 字符串解码 和 编码
         pipeline.addLast("decoder", new HttpRequestDecoder());
         pipeline.addLast("encoder", new HttpResponseEncoder());
-//        pipeline.addLast(new StringEncoder(Charset.forName("GBK")));
-//        pipeline.addLast(new StringDecoder(Charset.forName("UTF-8")));
         pipeline.addLast("aggregator", new HttpObjectAggregator(10 * 1024 * 1024));
 
         // 自己的逻辑Handler

@@ -60,6 +60,10 @@ public final class StringUtil {
         return str == null || str.trim().length() == 0;
     }
 
+    public static boolean notNull (String str) {
+        return !isNull(str);
+    }
+
     /**
      * 字符串编码
      */

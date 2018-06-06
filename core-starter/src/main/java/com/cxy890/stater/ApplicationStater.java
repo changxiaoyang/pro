@@ -1,6 +1,5 @@
 package com.cxy890.stater;
 
-import com.cxy890.config.GlobalCxyConfig;
 import com.cxy890.config.annotation.AppStater;
 import com.cxy890.config.loader.context.ContextLoader;
 import com.cxy890.config.loader.context.CxyContext;
@@ -53,17 +52,19 @@ public class ApplicationStater {
 
         if (ContextLoader.loadFramework())
             log.info("Framework configuration load complete");
+
         Annotation[] annotations = this.mainClass.getAnnotations();
         for (Annotation annotation : annotations)
             if (ContextLoader.loadImport(annotation))
                 log.info("Import configuration load complete");
 
-        if (ContextLoader.loadApplication(getBasePath()))
+        if (ContextLoader.loadApplication())
             log.info("Application configuration load complete");
 
-        CxyContext.initBeans();
+        CxyContext.initStuff();
     }
 
+    @Deprecated
     private String getBasePath() {
         String baseScanPackage = null;
         if (mainClass.isAnnotationPresent(AppStater.class)) {

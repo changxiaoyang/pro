@@ -10,10 +10,10 @@ import com.cxy890.config.util.ObjectUtil;
 import com.cxy890.config.util.StringUtil;
 import com.cxy890.server.Server;
 import com.cxy890.server.filter.Filter;
+import com.cxy890.server.filter.FilterRegister;
 import com.cxy890.server.filter.PathRegister;
 import com.cxy890.server.runner.Runner;
 
-import java.io.InputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -35,41 +35,24 @@ public class CxyContext {
 
     private static List<Runner> runnerList = new ArrayList<>();
 
-    private static List<Filter> filterList = new ArrayList<>();
-
-    private static List<InputStream> proContext = new ArrayList<>();
-
-    private static Map<String, Object> beanContext = new HashMap<>();
+    private static Map<String, Object> stuffContext = new HashMap<>();
 
     static void addClass(Class<?> clazz) {
         classContext.add(clazz);
     }
 
-    public static List<Class<?>> getClassList() {
-        return classContext;
-    }
-
-    static List<InputStream> getPropList() {
-        return proContext;
-    }
-
-    public static void clear() {
-        classContext.clear();
-        proContext.clear();
-    }
-
-    public static void initBeans() {
+    public static void initStuff() {
         classContext.forEach(clazz -> {
             try {
                 Annotation[] annotations = clazz.getAnnotations();
                 for (Annotation annotation : annotations) {
                     if ((annotation instanceof AutoScan) || annotation.annotationType().isAnnotationPresent(AutoScan.class)) {
-                        if (!clazz.isInterface()) {
-                            Object instance = injectClass(clazz);
+                        if (!clazz.isInterface() || !clazz.isAnnotation()) {
+                            Object instance = registerClass(clazz);
                             if (instance instanceof Runner)
                                 runnerList.add((Runner) instance);
                             if (instance instanceof Filter) {
-                                filterList.add((Filter) instance);
+                                FilterRegister.register((Filter) instance);
                             }
                         }
                     }
@@ -78,6 +61,7 @@ public class CxyContext {
                 e.printStackTrace();
             }
         });
+        classContext.clear();
     }
 
     /**
@@ -97,10 +81,17 @@ public class CxyContext {
         new Server((port == null) ? 8080 : (int) port).run();
     }
 
-    private static Object injectClass(Class<?> clazz) throws IllegalAccessException, InstantiationException, InvocationTargetException {
+    /**
+     * 注册该类
+     *
+     * @param clazz Object
+     *
+     * @return Object
+     */
+    private static Object registerClass(Class<?> clazz) throws IllegalAccessException, InstantiationException, InvocationTargetException {
         String lowerBeanName = StringUtil.firstToLower(clazz.getSimpleName());
-        if (beanExist(lowerBeanName)) {
-            return beanContext.get(lowerBeanName);
+        if (stuffExist(lowerBeanName)) {
+            return stuffContext.get(lowerBeanName);
         }
         Object instance = clazz.newInstance();
         Field[] declaredFields = clazz.getDeclaredFields();
@@ -129,10 +120,10 @@ public class CxyContext {
                 Object[] params = new Object[parameters.length];
                 for (int i = 0; i < parameters.length; i++) {
                     String name = parameters[i].getType().getSimpleName();
-                    Object bean = beanContext.get(name);
+                    Object bean = stuffContext.get(name);
                     if (bean == null) {
-                        bean = injectClass(parameters[i].getType());
-                        beanContext.put(lowerBeanName, bean);
+                        bean = registerClass(parameters[i].getType());
+                        stuffContext.put(lowerBeanName, bean);
                     }
                     params[i] = bean;
                 }
@@ -143,24 +134,31 @@ public class CxyContext {
         return instance;
     }
 
+    /**
+     * 注入字段值: @AutoAssign 注解中
+     *      value有值的， 获取配置文件值，没有的，读取注册的Class
+     *
+     * @param instance Object
+     * @param declaredFields Field[]
+     */
     private static void inject(Object instance, Field[] declaredFields) throws IllegalAccessException, InvocationTargetException, InstantiationException {
         for (Field field : declaredFields) {
-            if (beanExist(field.getName())) {
+            if (stuffExist(field.getName())) {
                 field.setAccessible(true);
-                field.set(instance, beanContext.get(field.getName()));
+                field.set(instance, stuffContext.get(field.getName()));
                 continue;
             }
             if (field.isAnnotationPresent(AutoAssign.class)) {
                 AutoAssign value = field.getAnnotation(AutoAssign.class);
-                Object obj = StringUtil.isNull(value.value()) ? injectClass(field.getType()) : EnvironmentLoader.get(value.value());
+                Object obj = StringUtil.isNull(value.value()) ? registerClass(field.getType()) : EnvironmentLoader.get(value.value());
                 field.setAccessible(true);
                 field.set(instance, obj);
             }
         }
     }
 
-    private static boolean beanExist(String bean) {
-        return beanContext.get(bean) != null;
+    private static boolean stuffExist(String bean) {
+        return stuffContext.get(bean) != null;
     }
 
 }

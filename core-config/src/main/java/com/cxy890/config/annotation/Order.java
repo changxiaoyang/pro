@@ -10,6 +10,7 @@ import java.lang.annotation.Target;
  *
  * Created by trs on 2017/8/13.
  */
+@Deprecated
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Order {

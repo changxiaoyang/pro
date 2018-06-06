@@ -38,20 +38,4 @@ public class EnvironmentLoader {
         }
     }
 
-
-    /*List<InputStream> propList = CxyContext.getPropList();
-        if (propList == null || propList.isEmpty()) return;
-
-        propList.forEach(inputStream -> {
-            try {
-                Properties props = new Properties();
-                props.loadApplication(inputStream);
-                for (Object key : props.keySet()) {
-                    String value = new String(props.getProperty(key.toString()).getBytes("ISO-8859-1"), "utf-8");
-                    putProp(key.toString(), value);
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        });*/
 }

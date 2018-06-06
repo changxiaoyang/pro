@@ -2,11 +2,9 @@ package com.cxy890.config.loader.context;
 
 import com.cxy890.config.annotation.Import;
 import com.cxy890.config.util.ClassUtil;
-import com.cxy890.server.filter.Filter;
 
 import java.io.File;
 import java.lang.annotation.Annotation;
-import java.lang.reflect.AnnotatedType;
 import java.net.JarURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
@@ -49,20 +47,17 @@ public class ContextLoader {
     }
 
     /**
-     * 获取某包下所有类
-     *
-     * @param packageName  包名
+     * 获取项目目录下所有类
      */
-    public static boolean loadApplication(String packageName) {
+    public static boolean loadApplication() {
         ClassLoader loader = Thread.currentThread().getContextClassLoader();
-        String packagePath = packageName.replace(".", "/");
         URL url = loader.getResource(".");
         if (url != null) {
             String type = url.getProtocol();
-            if (type.equals("file")) {
-                loadFromFile(url.getPath(), loader);
-            } else if (type.equals("jar")) {
-                loadFromJar(url, loader);
+            if (FILE.equals(type)) {
+                loadFromFile(url.getPath());
+            } else if (JAR.equals(type)) {
+                loadFromJar(url);
             }
         }
         return true;
@@ -74,7 +69,7 @@ public class ContextLoader {
      * @param filePath     文件路径
      * @return 类的完整名称
      */
-    private static List<String> loadFromFile(String filePath, ClassLoader loader) {
+    private static List<String> loadFromFile(String filePath) {
         List<String> myClassName = new ArrayList<>();
         File file = new File(filePath);
         File[] childFiles = file.listFiles();
@@ -83,7 +78,7 @@ public class ContextLoader {
 
         for (File childFile : childFiles) {
             if (childFile.isDirectory()) {
-                myClassName.addAll(loadFromFile(childFile.getPath(), loader));
+                myClassName.addAll(loadFromFile(childFile.getPath()));
             } else {
                 String childFilePath = childFile.getPath();
                 if (childFilePath.endsWith(".class")) {
@@ -103,7 +98,7 @@ public class ContextLoader {
      *
      * @param url jar URL
      */
-    private static void loadFromJar(URL url, ClassLoader loader) {
+    private static void loadFromJar(URL url) {
         try {
             JarURLConnection jarURLConnection = (JarURLConnection) url.openConnection();
             JarFile jarFile = jarURLConnection.getJarFile();
@@ -114,7 +109,7 @@ public class ContextLoader {
                 if (entryName.endsWith(".class")) {
                     if (entryName.startsWith(url.getPath())) {
                         entryName = entryName.replace("/", ".").substring(0, entryName.lastIndexOf("."));
-                        CxyContext.addClass(Class.forName(entryName));
+                        ClassUtil.ifExist(entryName, CxyContext::addClass);
                     }
                 }
             }
@@ -123,20 +118,4 @@ public class ContextLoader {
         }
     }
 
-   /* *//**
-     * 从所有jar中搜索该包，并获取该包下所有类
-     *
-     * @param urls         URL集合
-     * @param packagePath  包路径
-     *//*
-    private static void loadClassNameByJars(URL[] urls, String packagePath) {
-        if (urls != null) {
-            for (URL url : urls) {
-                String urlPath = url.getPath();
-                if (urlPath.endsWith("classes/")) continue;
-                String jarPath = urlPath + "!/" + packagePath;
-                loadFromJar(url, jarPath);
-            }
-        }
-    }*/
 }

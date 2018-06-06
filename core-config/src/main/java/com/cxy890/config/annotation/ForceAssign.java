@@ -10,6 +10,7 @@ import java.lang.annotation.Target;
  *
  * Created by ChangXiaoyang on 2017/9/6.
  */
+@Deprecated
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ForceAssign {

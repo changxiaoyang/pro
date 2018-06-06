@@ -20,6 +20,7 @@ import java.util.*;
  * Created by ChangXiaoyang on 2017/5/17.
  */
 @Slf4j
+@Deprecated
 public class GlobalCxyConfig {
 
     /**

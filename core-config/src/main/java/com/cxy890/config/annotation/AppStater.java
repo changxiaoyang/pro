@@ -8,6 +8,7 @@ import java.lang.annotation.Target;
 /**
  * @author BD-PC27
  */
+@Deprecated
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface AppStater {

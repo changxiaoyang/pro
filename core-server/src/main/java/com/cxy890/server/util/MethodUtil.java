@@ -1,5 +1,8 @@
 package com.cxy890.server.util;
 
+import com.cxy890.server.ContextHolder;
+import com.cxy890.server.filter.Filter;
+import com.cxy890.server.filter.FilterRegister;
 import com.cxy890.server.filter.PathRegister;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -14,6 +17,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 /**
  * @author BD-PC27
@@ -34,21 +38,25 @@ public class MethodUtil {
     }
 
     public static String invokeAsString(FullHttpRequest httpRequest) {
+        //todo: 封装个HttpServerRequest, HttpServerResponse,  实现下 Filter Handler支持
+        ContextHolder.setRequest(httpRequest);
         try {
             HttpMethod httpMethod = httpRequest.method();
 
+            if (FilterRegister.deny(httpRequest)) return "{}";
+
             String uri = URLDecoder.decode(httpRequest.uri(), "utf-8");
             Map<String, Object> parameter = new HashMap<>();
-            if (httpMethod.equals(HttpMethod.GET)) {
+            if (HttpMethod.GET.equals(httpMethod)) {
                 log.debug(uri + "  Get");
                 Helper helper = parseGet(uri);
                 uri = helper.uri;
                 parameter = helper.params;
             }
 
-            if (httpMethod.equals(HttpMethod.POST)) {
-                HttpPostRequestDecoder decoder = new HttpPostRequestDecoder(
-                        factory, httpRequest);
+            if (HttpMethod.POST.equals(httpMethod)) {
+                log.debug(uri + "  Post");
+                HttpPostRequestDecoder decoder = new HttpPostRequestDecoder(factory, httpRequest);
                 List<InterfaceHttpData> postData = decoder.getBodyHttpDatas();
                 for(InterfaceHttpData data:postData){
                     if (data.getHttpDataType() == InterfaceHttpData.HttpDataType.Attribute) {

@@ -37,6 +37,7 @@ public final class ClassUtil {
      * @param pack Package
      * @return Class Set
      */
+    @Deprecated
     public static Set<Class<?>> getClasses(Package pack){
 
         //第一个class类的集合
@@ -126,6 +127,7 @@ public final class ClassUtil {
      * @param recursive 是否深度遍历
      * @param classes Class Set
      */
+    @Deprecated
     private static void findAndAddClassesInPackageByFile(String packageName, String packagePath, final boolean recursive, Set<Class<?>> classes){
         //获取此包的目录 建立一个File
         File dir = new File(packagePath);

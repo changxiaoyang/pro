@@ -1,11 +1,12 @@
 package com.cxy890.server.filter;
 
+import io.netty.handler.codec.http.FullHttpRequest;
+
 /**
  * @author BD-PC27
  */
 public interface Filter {
 
-    boolean permit() throws Exception;
+    boolean filter(FullHttpRequest httpRequest);
 
-    void before() throws Exception;
 }

@@ -6,12 +6,11 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * 默认实现
- *
- * Created by ChangXiaoyang on 2017/8/12.
+ * @author BD-PC27
  */
-@Deprecated
-@Target(ElementType.TYPE)
+@Target({ElementType.METHOD, ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface DefaultRealize {
+public @interface Stuff {
+
+    String value() default "";
 }
