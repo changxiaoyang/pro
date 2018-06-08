@@ -13,6 +13,7 @@ import java.util.Map;
  * Created by ChangXiaoyang on 2017/9/15.
  */
 @AutoScan
+@Deprecated
 public class EnvContext implements IEnvironment {
 
     /**

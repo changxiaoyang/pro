@@ -5,6 +5,7 @@ package com.cxy890.config.loader;
  *
  * Created by ChangXiaoyang on 2017/8/12.
  */
+@Deprecated
 public interface IEnvironment {
 
     String getAsString(String key);
