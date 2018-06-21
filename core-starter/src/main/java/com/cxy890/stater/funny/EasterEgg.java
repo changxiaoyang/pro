@@ -18,8 +18,7 @@ public class EasterEgg {
 
     private static String getBanner() {
         String bnr;
-        if ((bnr = getFromFile()) != null) return bnr;
-        return StringUtil.decode(banner);
+        return ((bnr = getFromFile()) != null) ? bnr : banner;
     }
 
     private static String getFromFile() {
@@ -44,10 +43,10 @@ public class EasterEgg {
      * keep mysterious
      */
     private final static String banner = "  ============= Welcome, my little darling. ============= \n\r"
-            + "ddRddRddyddxddxddxddxddxddxddyddyddxddxddxddxddxddxddyddyddxddxddxddxddxddxddy" +
+            + StringUtil.decode("ddRddRddyddxddxddxddxddxddxddyddyddxddxddxddxddxddxddyddyddxddxddxddxddxddxddy" +
             "ddZddRddRddRdgdd4NddyddxddxddyddRdgddgdd4PddyddxddxddyddRdgddgdd4UddyddxddxddyddRdgdddZddRddRddRdgdddRddzdd" +
             "pd4MddzddRdgddgdddRddzddpd4MddzddRdgddgdddRddOd4MddpddoddRdgdddZddRddRddRdgdddRddzd4MddpddzddRdgddgdddRddOd" +
             "4Sd4SddoddRdgddgdddRddzd4MddpddzddRdgdddZddRddRddRdgdddRddLddxddxddLd4NdgddgdddRddLddxddxddLd4PdgddgdddRddL" +
-            "ddxddxddLd4UdgdddZddRddRddRd4TddxddxddxddxddxddxddLd4TddxddxddxddxddxddxddLd4TddxddxddxddxddxddxddL";
+            "ddxddxddLd4UdgdddZddRddRddRd4TddxddxddxddxddxddxddLd4TddxddxddxddxddxddxddLd4TddxddxddxddxddxddxddL");
 
 }

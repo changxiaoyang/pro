@@ -28,7 +28,8 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <scope>compile</scope>
+            <scope>provided</scope>
+            <optional>true</optional>
             <version>${lombok.version}</version>
         </dependency>
 

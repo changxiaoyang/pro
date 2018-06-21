@@ -6,3 +6,5 @@ Configuration
 
 
 ####    project.active=dev
+
+###  banner.bnr

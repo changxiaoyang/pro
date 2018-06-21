@@ -9,7 +9,15 @@ import org.elasticsearch.action.bulk.BulkProcessor;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.index.IndexRequest;
+import org.elasticsearch.action.search.SearchRequest;
+import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.common.xcontent.XContentType;
+import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.search.SearchHits;
+import org.elasticsearch.search.builder.SearchSourceBuilder;
+
+import javax.naming.directory.SearchResult;
+import java.util.List;
 
 /**
  * @author BD-PC27
@@ -32,6 +40,17 @@ public class ESRepository {
         request.id(EsParser.getId(entity, clazz));
         request.source(StringUtil.toJson(entity), XContentType.JSON);
         clients.getTransportClient().index(request);
+    }
+
+    public <T> List<T> search(SearchSourceBuilder queryBuilder) {
+        SearchRequest searchRequest = new SearchRequest();
+        searchRequest.indices("").types("").source(queryBuilder);
+        SearchResponse searchResponse = clients.getTransportClient().search(searchRequest).actionGet();
+        log.debug(searchResponse.getTook() + "ms");
+        log.debug(searchResponse.getNumReducePhases() + "a");
+        log.debug(searchResponse.getTotalShards() + "b");
+        SearchHits hits = searchResponse.getHits();
+        return null;
     }
 
     /**
