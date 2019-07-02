@@ -10,10 +10,9 @@ import java.util.Properties;
 import static com.cxy890.config.loader.environment.EnvironmentLoader.APP;
 
 /**
- * @author BD-PC27
+ * @author ChangXiaoyang
  */
-public final class PropHelper {
-
+final class PropHelper {
 
     private static Properties PROP = new Properties();
 
@@ -32,8 +31,7 @@ public final class PropHelper {
     }
 
     private static boolean loadByName(String application) throws IOException {
-        ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
-        @Cleanup InputStream resourceAsStream = contextClassLoader.getResourceAsStream(application + ".properties");
+        @Cleanup InputStream resourceAsStream = ClassLoader.getSystemResourceAsStream(application + ".properties");
         if (resourceAsStream != null)
             PROP.load(resourceAsStream);
 

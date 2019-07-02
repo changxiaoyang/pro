@@ -13,6 +13,7 @@ import com.cxy890.server.filter.Filter;
 import com.cxy890.server.filter.FilterRegister;
 import com.cxy890.server.filter.PathRegister;
 import com.cxy890.server.runner.Runner;
+import lombok.extern.slf4j.Slf4j;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -29,6 +30,7 @@ import java.util.Map;
  *
  * Created by ChangXiaoyang on 2017/8/20.
  */
+@Slf4j
 public class CxyContext {
 
     private static List<Class<?>> classContext = new ArrayList<>();
@@ -47,7 +49,7 @@ public class CxyContext {
                 Annotation[] annotations = clazz.getAnnotations();
                 for (Annotation annotation : annotations) {
                     if ((annotation instanceof AutoScan) || annotation.annotationType().isAnnotationPresent(AutoScan.class)) {
-                        if (!clazz.isInterface() || !clazz.isAnnotation()) {
+                        if (!clazz.isInterface() && !clazz.isAnnotation()) {
                             Object instance = registerClass(clazz);
                             if (instance instanceof Runner)
                                 runnerList.add((Runner) instance);
@@ -58,7 +60,7 @@ public class CxyContext {
                     }
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error("init stuff error:", e);
             }
         });
         classContext.clear();
@@ -85,7 +87,6 @@ public class CxyContext {
      * 注册该类
      *
      * @param clazz Object
-     *
      * @return Object
      */
     private static Object registerClass(Class<?> clazz) throws IllegalAccessException, InstantiationException, InvocationTargetException {

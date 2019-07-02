@@ -1,7 +1,5 @@
 package com.cxy890.config.util;
 
-import org.yaml.snakeyaml.Yaml;
-
 import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
@@ -12,7 +10,7 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 /**
- * @author BD-PC27
+ * @author ChangXiaoyang
  */
 public final class FileUtil {
 
@@ -35,6 +33,11 @@ public final class FileUtil {
             url =  getUrl(FileUtil.class);
         }
         return url;
+    }
+
+    public static boolean exists(String path) {
+        File file = new File(path);
+        return file.exists();
     }
 
     private static String getProtocol() {

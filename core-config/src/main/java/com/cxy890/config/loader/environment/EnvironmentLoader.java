@@ -20,12 +20,17 @@ public class EnvironmentLoader {
 
     static final String APP = "application";
 
-    public static boolean load() throws IOException {
-        if (YmlHelper.load())
-            return true;
+    public static boolean load() {
+        try {
+            if (YmlHelper.load())
+                return true;
 
-        active = bak;
-        return PropHelper.load();
+            active = bak;
+            return PropHelper.load();
+        } catch (IOException e) {
+            throw new RuntimeException("load environment error.", e);
+        }
+
     }
 
     public static Object get(String key) {

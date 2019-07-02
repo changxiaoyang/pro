@@ -43,6 +43,8 @@ public class HttpExchanger {
         Map<String, Object> parameter = request.params();
 
         Method method = PathRegister.getMethod(uri);
+        if (method == null)
+            throw new NoSuchMethodException("-------------");
         Object instance = PathRegister.getInstance(uri);
         int count = method.getParameterCount();
         if (method.getParameterCount() == 0) {

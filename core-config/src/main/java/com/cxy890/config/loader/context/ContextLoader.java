@@ -2,6 +2,7 @@ package com.cxy890.config.loader.context;
 
 import com.cxy890.config.annotation.Import;
 import com.cxy890.config.util.ClassUtil;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
 import java.lang.annotation.Annotation;
@@ -18,6 +19,7 @@ import java.util.jar.JarFile;
  *
  * Created by ChangXiaoyang on 2017/08/12
  */
+@Slf4j
 public class ContextLoader {
 
     private static final String FILE = "file";
@@ -114,7 +116,7 @@ public class ContextLoader {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("load class from jar error:", e);
         }
     }
 

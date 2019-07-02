@@ -7,7 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.io.*;
 
 /**
- * @author BD-PC27
+ * @author ChangXiaoyang
  */
 @Slf4j
 public class EasterEgg {
@@ -42,7 +42,7 @@ public class EasterEgg {
     /**
      * keep mysterious
      */
-    private final static String banner = "  ============= Welcome, my little darling. ============= \n\r"
+    private final static String banner = " \n\r ============= Welcome, my little darling. ============= \n\r"
             + StringUtil.decode("ddRddRddyddxddxddxddxddxddxddyddyddxddxddxddxddxddxddyddyddxddxddxddxddxddxddy" +
             "ddZddRddRddRdgdd4NddyddxddxddyddRdgddgdd4PddyddxddxddyddRdgddgdd4UddyddxddxddyddRdgdddZddRddRddRdgdddRddzdd" +
             "pd4MddzddRdgddgdddRddzddpd4MddzddRdgddgdddRddOd4MddpddoddRdgdddZddRddRddRdgdddRddzd4MddpddzddRdgddgdddRddOd" +

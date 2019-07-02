@@ -9,11 +9,10 @@ import com.cxy890.stater.funny.EasterEgg;
 import com.cxy890.stater.support.SimpleStopWatch;
 import lombok.extern.slf4j.Slf4j;
 
-import java.io.IOException;
 import java.lang.annotation.Annotation;
 
 /**
- * @author BD-PC27
+ * @author ChangXiaoyang
  */
 @Slf4j
 public class ApplicationStater {
@@ -31,7 +30,7 @@ public class ApplicationStater {
         this.args = args;
     }
 
-    public void start() throws Throwable {
+    public void start() {
         SimpleStopWatch watch = new SimpleStopWatch(true);
         before();
         log.info(String.format("Prepare complete, use time :%s ms", watch.issueAndReset()));
@@ -41,11 +40,11 @@ public class ApplicationStater {
         log.info(String.format("Server started, use time :%s ms", watch.issueAndReset()));
     }
 
-    public static void start(Class<?> mainApplication, String ...args) throws Throwable {
+    public static void start(Class<?> mainApplication, String ...args) {
         new ApplicationStater(mainApplication, args).start();
     }
 
-    private void before() throws IOException {
+    private void before() {
         EasterEgg.printBanner();
         if (EnvironmentLoader.load())
             log.info("Environment loadApplication complete");
@@ -76,7 +75,7 @@ public class ApplicationStater {
         return baseScanPackage;
     }
 
-    public static void main(String[] args) throws Throwable {
+    public static void main(String[] args) {
         start(ApplicationStater.class, args);
     }
 
