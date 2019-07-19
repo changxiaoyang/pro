@@ -1,6 +1,6 @@
 package com.cxy890.elasticsearch.client;
 
-import com.cxy890.config.util.StringUtil;
+import com.cxy890.config.util.Strings;
 import com.cxy890.elasticsearch.annotations.EsFiled;
 import com.cxy890.elasticsearch.annotations.EsId;
 import com.cxy890.elasticsearch.annotations.EsIndex;
@@ -42,11 +42,11 @@ public class EsParser {
                 EsFiled esFiled = field.getAnnotation(EsFiled.class);
                 if (esFiled.ignore()) continue;
                 source.append("\"").append(esFiled.value()).append("\":{\"type\":\"").append(esFiled.type().value()).append("\"");
-                if (!StringUtil.isNull(esFiled.analyzer())) {
+                if (!Strings.isNull(esFiled.analyzer())) {
                     source.append(",\"analyzer\":\"").append(esFiled.analyzer()).append("\"");
                 }
                 if (EField.DATE.equals(esFiled.type())) {
-                    if (StringUtil.isNull(esFiled.format()))
+                    if (Strings.isNull(esFiled.format()))
                         source.append(",\"format\":\"strict_date_optional_time||epoch_millis\"");
                     else
                         source.append(",\"format\":\"").append(esFiled.format()).append("\"");

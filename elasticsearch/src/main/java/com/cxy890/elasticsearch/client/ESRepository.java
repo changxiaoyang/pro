@@ -1,8 +1,8 @@
 package com.cxy890.elasticsearch.client;
 
-import com.cxy890.config.annotation.AutoAssign;
 import com.cxy890.config.annotation.AutoScan;
-import com.cxy890.config.util.StringUtil;
+import com.cxy890.config.annotation.Value;
+import com.cxy890.config.util.Strings;
 import com.cxy890.elasticsearch.annotations.EsIndex;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.action.bulk.BulkProcessor;
@@ -12,11 +12,9 @@ import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.common.xcontent.XContentType;
-import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 
-import javax.naming.directory.SearchResult;
 import java.util.List;
 
 /**
@@ -26,7 +24,7 @@ import java.util.List;
 @Slf4j
 public class ESRepository {
 
-    @AutoAssign
+    @Value
     private Clients clients;
 
     public <T> void save(T entity, Class<T> clazz) {
@@ -36,9 +34,9 @@ public class ESRepository {
             return;
         }
         clients.create(index, EsParser.getSource(clazz));
-        IndexRequest request = new IndexRequest(index.value(), StringUtil.isNull(index.type())?index.value():index.type());
+        IndexRequest request = new IndexRequest(index.value(), Strings.isNull(index.type())?index.value():index.type());
         request.id(EsParser.getId(entity, clazz));
-        request.source(StringUtil.toJson(entity), XContentType.JSON);
+        request.source(Strings.toJson(entity), XContentType.JSON);
         clients.getTransportClient().index(request);
     }
 

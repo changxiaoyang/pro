@@ -2,64 +2,59 @@ package com.cxy890.config.loader.environment;
 
 import com.cxy890.config.util.FileUtil;
 import lombok.Cleanup;
+import lombok.extern.slf4j.Slf4j;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
 
 import static com.cxy890.config.ConfigKeys.APPLICATION_ACTIVE;
-import static com.cxy890.config.loader.environment.EnvironmentLoader.APP;
 
 /**
  * @author ChangXiaoyang
  */
-final class YmlHelper {
+@Slf4j
+public final class YmlHelper {
+
+    private static final String APP = "application";
+
+    private static final String SUFFIX = ".yml";
 
     private static Map<String, Object> Y_MAP = new HashMap<>();
 
-    private static Properties PROP = new Properties();
-
-    static boolean load() throws IOException {
-        loadYml(APP);
-        Object activePro = getValue(APPLICATION_ACTIVE);
-        if (activePro != null) {
-            loadYml(APP + "-" + activePro);
-        }
-
-        return !Y_MAP.isEmpty();
-    }
-
-    private static void loadYml(String resourceName) throws IOException {
-        Yaml yaml = new Yaml();
-        String filePath = FileUtil.getProjectPath() + resourceName;
-        if (FileUtil.exists(filePath + ".yml")) {
-            @Cleanup FileInputStream inputStream = new FileInputStream(filePath + ".yml");
-            Y_MAP.putAll(yaml.load(inputStream));
-            return;
-        }
-        if (FileUtil.exists(filePath + ".properties")) {
-            @Cleanup InputStream inputStream = new FileInputStream(filePath + ".properties");
-            PROP.load(inputStream);
-            return;
-        }
-        @Cleanup InputStream resource = YmlHelper.class.getClassLoader().getResourceAsStream(resourceName + ".yml");
-        if (resource == null) {
-            @Cleanup InputStream properties = YmlHelper.class.getClassLoader().getResourceAsStream(resourceName + ".properties");
-            if (properties != null) {
-                PROP.load(properties);
+    public static boolean load(Class<?> mainClass) {
+        try {
+            loadYml(APP, mainClass);
+            Object activePro = get(APPLICATION_ACTIVE);
+            if (activePro != null) {
+                loadYml(APP + "-" + activePro, mainClass);
             }
-        } else {
-            Y_MAP.putAll(yaml.load(resource));
+
+            return !Y_MAP.isEmpty();
+        } catch (IOException e) {
+            throw new RuntimeException("load environment error.", e);
         }
 
     }
 
-    static Object getValue(String keyStr) {
+    private static void loadYml(String resourceName, Class<?> mainClass) throws IOException {
+        Yaml yaml = new Yaml();
+        String filePath = FileUtil.getProjectPath(mainClass) + resourceName;
+        if (FileUtil.exists(filePath + SUFFIX)) {
+            @Cleanup FileInputStream inputStream = new FileInputStream(filePath + SUFFIX);
+            Y_MAP.putAll(yaml.load(inputStream));
+            log.debug("load environment from file :{}", filePath + SUFFIX);
+            return;
+        }
+        @Cleanup InputStream resource = YmlHelper.class.getClassLoader().getResourceAsStream(resourceName + SUFFIX);
+        Y_MAP.putAll(yaml.load(resource));
+        log.debug("load environment from resource :{}", filePath + SUFFIX);
+    }
+
+    public static Object get(String keyStr) {
         String[] keys = keyStr.split("\\.");
         Object value = null;
         for (String key : keys) {

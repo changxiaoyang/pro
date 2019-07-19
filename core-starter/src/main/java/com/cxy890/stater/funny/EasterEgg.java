@@ -1,6 +1,6 @@
 package com.cxy890.stater.funny;
 
-import com.cxy890.config.util.StringUtil;
+import com.cxy890.config.util.Strings;
 import lombok.Cleanup;
 import lombok.extern.slf4j.Slf4j;
 
@@ -18,7 +18,7 @@ public class EasterEgg {
 
     private static String getBanner() {
         String bnr;
-        return ((bnr = getFromFile()) != null) ? bnr : banner;
+        return ((bnr = getFromFile()) != null) ? "\n\r" + bnr : banner;
     }
 
     private static String getFromFile() {
@@ -43,7 +43,7 @@ public class EasterEgg {
      * keep mysterious
      */
     private final static String banner = " \n\r ============= Welcome, my little darling. ============= \n\r"
-            + StringUtil.decode("ddRddRddyddxddxddxddxddxddxddyddyddxddxddxddxddxddxddyddyddxddxddxddxddxddxddy" +
+            + Strings.decode("ddRddRddyddxddxddxddxddxddxddyddyddxddxddxddxddxddxddyddyddxddxddxddxddxddxddy" +
             "ddZddRddRddRdgdd4NddyddxddxddyddRdgddgdd4PddyddxddxddyddRdgddgdd4UddyddxddxddyddRdgdddZddRddRddRdgdddRddzdd" +
             "pd4MddzddRdgddgdddRddzddpd4MddzddRdgddgdddRddOd4MddpddoddRdgdddZddRddRddRdgdddRddzd4MddpddzddRdgddgdddRddOd" +
             "4Sd4SddoddRdgddgdddRddzd4MddpddzddRdgdddZddRddRddRdgdddRddLddxddxddLd4NdgddgdddRddLddxddxddLd4PdgddgdddRddL" +

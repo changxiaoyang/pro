@@ -15,8 +15,6 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 /**
- * 包操作工具类
- *
  * Created by ChangXiaoyang on 2017/08/12
  */
 @Slf4j
@@ -117,6 +115,7 @@ public class ContextLoader {
             }
         } catch (Exception e) {
             log.error("load class from jar error:", e);
+            throw new RuntimeException("Load Class from jar error:", e);
         }
     }
 

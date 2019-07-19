@@ -2,6 +2,8 @@ package com.cxy890.config.util;
 
 import java.io.*;
 import java.net.*;
+import java.security.PermissionCollection;
+import java.security.ProtectionDomain;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -25,7 +27,7 @@ public final class FileUtil {
     private static String projectPath = null;
 
     public static URL getUrl(Class clazz) {
-         return clazz.getProtectionDomain().getCodeSource().getLocation();
+        return clazz.getProtectionDomain().getCodeSource().getLocation();
     }
 
     private static URL getUrl() {
@@ -54,9 +56,9 @@ public final class FileUtil {
         return FILE.equals(getProtocol());
     }
 
-    public static String getProjectPath() {
+    public static String getProjectPath(Class<?> mainClass) {
         if (projectPath == null) {
-            URL url = getUrl();
+            URL url = getUrl(mainClass);
             try {
                 String filePath = URLDecoder.decode(url.getPath(), "utf-8");
                 if (isJar()) {

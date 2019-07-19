@@ -10,8 +10,7 @@ import java.lang.annotation.Target;
  *
  * Created by ChangXiaoyang on 2017/5/17.
  */
-@Deprecated
-@Target(ElementType.FIELD)
+@Target({ElementType.FIELD, ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Value {
 

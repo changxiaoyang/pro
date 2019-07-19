@@ -1,10 +1,8 @@
 package com.cxy890.stater;
 
-import com.cxy890.config.annotation.AppStater;
 import com.cxy890.config.loader.context.ContextLoader;
 import com.cxy890.config.loader.context.CxyContext;
-import com.cxy890.config.loader.environment.EnvironmentLoader;
-import com.cxy890.config.util.StringUtil;
+import com.cxy890.config.loader.environment.YmlHelper;
 import com.cxy890.stater.funny.EasterEgg;
 import com.cxy890.stater.support.SimpleStopWatch;
 import lombok.extern.slf4j.Slf4j;
@@ -37,7 +35,7 @@ public class ApplicationStater {
 
         CxyContext.startServer();
         CxyContext.runnerStart();
-        log.info(String.format("Server started, use time :%s ms", watch.issueAndReset()));
+        log.info(String.format("Server started, use time :%s ms", watch.totalCostMillis()));
     }
 
     public static void start(Class<?> mainApplication, String ...args) {
@@ -46,37 +44,21 @@ public class ApplicationStater {
 
     private void before() {
         EasterEgg.printBanner();
-        if (EnvironmentLoader.load())
-            log.info("Environment loadApplication complete");
+        if (YmlHelper.load(mainClass))
+            log.info("Environment loadApplication complete.");
 
         if (ContextLoader.loadFramework())
-            log.info("Framework configuration load complete");
+            log.info("Framework configuration load complete.");
 
         Annotation[] annotations = this.mainClass.getAnnotations();
         for (Annotation annotation : annotations)
             if (ContextLoader.loadImport(annotation))
-                log.info("Import configuration load complete");
+                log.info("Import configuration load complete.");
 
         if (ContextLoader.loadApplication())
-            log.info("Application configuration load complete");
+            log.info("Application configuration load complete.");
 
         CxyContext.initStuff();
-    }
-
-    @Deprecated
-    private String getBasePath() {
-        String baseScanPackage = null;
-        if (mainClass.isAnnotationPresent(AppStater.class)) {
-            AppStater appStater = mainClass.getAnnotation(AppStater.class);
-            baseScanPackage = appStater.basePackage();
-        }
-        if (StringUtil.isNull(baseScanPackage))
-            baseScanPackage = mainClass.getPackage().getName();
-        return baseScanPackage;
-    }
-
-    public static void main(String[] args) {
-        start(ApplicationStater.class, args);
     }
 
 }

@@ -8,7 +8,7 @@ import java.lang.annotation.Target;
 /**
  * @author BD-PC27
  */
-@Target({ElementType.METHOD, ElementType.FIELD})
+@Target({ElementType.CONSTRUCTOR, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Stuff {
 

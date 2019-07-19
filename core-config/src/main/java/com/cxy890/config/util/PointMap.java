@@ -5,7 +5,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * 三维点Map， 新的一种Map实现， 具体作用未知。。。
+ * 三维点Map
  *
  * Created by ChangXiaoyang on 2017/5/20.
  */

@@ -8,7 +8,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  *
  * Created by ChangXiaoyang on 2017/5/18.
  */
-public final class StringUtil {
+public final class Strings {
 
     private static ObjectMapper mapper = new ObjectMapper();
 

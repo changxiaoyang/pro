@@ -20,13 +20,12 @@ import java.util.jar.JarFile;
  */
 public final class ClassUtil {
 
-    public static boolean ifExist(String className, Consumer<Class<?>> consumer) {
+    public static void ifExist(String className, Consumer<Class<?>> consumer) {
         try {
             Class<?> aClass = Class.forName(className);
             consumer.accept(aClass);
-            return true;
         } catch (ClassNotFoundException e) {
-            return false;
+            throw new RuntimeException("Class Not Found:" + className, e);
         }
     }
 

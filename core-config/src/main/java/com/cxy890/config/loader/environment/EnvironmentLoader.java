@@ -20,7 +20,7 @@ public class EnvironmentLoader {
 
     static final String APP = "application";
 
-    public static boolean load() {
+/*    public static boolean load() {
         try {
             if (YmlHelper.load())
                 return true;
@@ -31,8 +31,8 @@ public class EnvironmentLoader {
             throw new RuntimeException("load environment error.", e);
         }
 
-    }
-
+    }*/
+/*
     public static Object get(String key) {
         switch (active){
             case dft:
@@ -41,6 +41,6 @@ public class EnvironmentLoader {
             default:
                 return PropHelper.getValue(key);
         }
-    }
+    }*/
 
 }

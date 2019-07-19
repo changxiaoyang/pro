@@ -1,13 +1,10 @@
 package com.cxy890.config.loader.context;
 
 import com.cxy890.config.ConfigKeys;
-import com.cxy890.config.annotation.AutoAssign;
-import com.cxy890.config.annotation.AutoScan;
-import com.cxy890.config.annotation.Param;
-import com.cxy890.config.annotation.Path;
-import com.cxy890.config.loader.environment.EnvironmentLoader;
+import com.cxy890.config.annotation.*;
+import com.cxy890.config.loader.environment.YmlHelper;
 import com.cxy890.config.util.ObjectUtil;
-import com.cxy890.config.util.StringUtil;
+import com.cxy890.config.util.Strings;
 import com.cxy890.server.Server;
 import com.cxy890.server.filter.Filter;
 import com.cxy890.server.filter.FilterRegister;
@@ -16,14 +13,8 @@ import com.cxy890.server.runner.Runner;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.lang.reflect.*;
+import java.util.*;
 
 /**
  * 环境加载器
@@ -60,7 +51,7 @@ public class CxyContext {
                     }
                 }
             } catch (Exception e) {
-                log.error("init stuff error:", e);
+                throw new RuntimeException("Init stuff error:", e);
             }
         });
         classContext.clear();
@@ -79,7 +70,7 @@ public class CxyContext {
      * 启动 summer web server
      */
     public static void startServer() {
-        Object port = EnvironmentLoader.get(ConfigKeys.APPLICATION_PORT);
+        Object port = YmlHelper.get(ConfigKeys.APPLICATION_PORT);
         new Server((port == null) ? 8080 : (int) port).run();
     }
 
@@ -90,11 +81,41 @@ public class CxyContext {
      * @return Object
      */
     private static Object registerClass(Class<?> clazz) throws IllegalAccessException, InstantiationException, InvocationTargetException {
-        String lowerBeanName = StringUtil.firstToLower(clazz.getSimpleName());
+        String lowerBeanName = Strings.firstToLower(clazz.getSimpleName());
         if (stuffExist(lowerBeanName)) {
             return stuffContext.get(lowerBeanName);
         }
-        Object instance = clazz.newInstance();
+        Object instance = null;
+        Constructor<?>[] constructors = clazz.getConstructors();
+        if (constructors == null || constructors.length == 0) {
+            throw new RuntimeException("Your bean class must has constructors.");
+        }
+        for (Constructor constructor : constructors) {
+            if (constructor.isAnnotationPresent(Stuff.class)) {
+                Stuff stuff = (Stuff) constructor.getAnnotation(Stuff.class);
+                String beanName = stuff.value();
+            }
+            Parameter[] parameters = constructor.getParameters();
+            if (parameters == null || parameters.length == 0) {
+                instance = constructor.newInstance();
+            } else {
+                List<Object> parameterObj = new ArrayList<>();
+                for (Parameter parameter : parameters){
+                    if (parameter.isAnnotationPresent(Value.class)) {
+                        parameterObj.add(YmlHelper.get(parameter.getAnnotation(Value.class).value()));
+                    } else {
+                        String name = Strings.firstToLower(parameter.getType().getSimpleName());
+                        if (stuffExist(name))
+                            parameterObj.add(stuffContext.get(name));
+                        else
+                            registerClass(parameter.getType());
+                    }
+                }
+                Object[] objs = new Object[parameterObj.size()];
+                parameterObj.toArray(objs);
+                instance = constructor.newInstance(objs);
+            }
+        }
         Field[] declaredFields = clazz.getDeclaredFields();
         inject(instance, declaredFields);
         Method[] declaredMethods = clazz.getDeclaredMethods();
@@ -112,7 +133,7 @@ public class CxyContext {
                 PathRegister.register(path, instance, method, paramNames);
                 continue;
             }
-            if (method.isAnnotationPresent(AutoAssign.class)) {
+            if (method.isAnnotationPresent(Stuff.class)) {
                 Parameter[] parameters = method.getParameters();
                 if (ObjectUtil.isDeepEmpty(parameters)) {
                     method.invoke(instance);
@@ -136,22 +157,21 @@ public class CxyContext {
     }
 
     /**
-     * 注入字段值: @AutoAssign 注解中
-     *      value有值的， 获取配置文件值，没有的，读取注册的Class
+     * 注入字段值: @Value 优先加载Bean，其次配置文件
      *
      * @param instance Object
      * @param declaredFields Field[]
      */
     private static void inject(Object instance, Field[] declaredFields) throws IllegalAccessException, InvocationTargetException, InstantiationException {
         for (Field field : declaredFields) {
-            if (stuffExist(field.getName())) {
-                field.setAccessible(true);
-                field.set(instance, stuffContext.get(field.getName()));
-                continue;
-            }
-            if (field.isAnnotationPresent(AutoAssign.class)) {
-                AutoAssign value = field.getAnnotation(AutoAssign.class);
-                Object obj = StringUtil.isNull(value.value()) ? registerClass(field.getType()) : EnvironmentLoader.get(value.value());
+            if (field.isAnnotationPresent(Value.class) && !Modifier.isFinal(field.getModifiers())) {
+                if (stuffExist(field.getName())) {
+                    field.setAccessible(true);
+                    field.set(instance, stuffContext.get(field.getName()));
+                    continue;
+                }
+                Value value = field.getAnnotation(Value.class);
+                Object obj = Strings.isNull(value.value()) ? registerClass(field.getType()) : YmlHelper.get(value.value());
                 field.setAccessible(true);
                 field.set(instance, obj);
             }

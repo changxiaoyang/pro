@@ -1,8 +1,10 @@
 package com.cxy890.elasticsearch.client;
 
-import com.cxy890.config.annotation.AutoAssign;
 import com.cxy890.config.annotation.AutoScan;
-import com.cxy890.config.util.StringUtil;
+import com.cxy890.config.annotation.Level;
+import com.cxy890.config.annotation.Stuff;
+import com.cxy890.config.annotation.Value;
+import com.cxy890.config.util.Strings;
 import com.cxy890.elasticsearch.annotations.EsIndex;
 import com.cxy890.server.runner.Runner;
 import lombok.Getter;
@@ -22,38 +24,42 @@ import org.elasticsearch.transport.client.PreBuiltTransportClient;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 /**
- * @author BD-PC27
+ * @author Changxiaoyang
  */
-@AutoScan
 @Slf4j
+@AutoScan(level = Level.CONFIGURATION)
 public class Clients implements Runner {
 
-    @AutoAssign("elasticsearch.cluster.name")
-    private String clusterName = "elasticsearch";
+    private final String clusterName;
 
-    @AutoAssign("elasticsearch.cluster.nodes")
-    private String clusterNodes = "localhost:9300";
+    private final List<String> clusterNodes;
 
-    @AutoAssign("elasticsearch.client.transport.sniff")
-    private String clientSniff = "true";
+    private final Boolean clientSniff;
 
     @Getter
     private TransportClient transportClient;
 
-    //...
+    public Clients(@Value("elasticsearch.cluster.name") String clusterName,
+                   @Value("elasticsearch.cluster.nodes") List<String> clusterNodes,
+                   @Value("elasticsearch.client.transport.sniff") Boolean clientSniff) {
+        this.clientSniff = clientSniff;
+        this.clusterNodes = clusterNodes;
+        this.clusterName = clusterName;
 
-    @AutoAssign
+    }
+
+    @Stuff
     public TransportClient transportClient() throws UnknownHostException {
-        String[] nodes = clusterNodes.split(",");
         Settings settings = Settings.builder()
                 .put("cluster.name", clusterName)
-                .put("client.transport.sniff", Boolean.valueOf(clientSniff)).build();
+                .put("client.transport.sniff", clientSniff).build();
         TransportClient transportClient = new PreBuiltTransportClient(settings);
-        for (String node : nodes) {
+        for (String node : clusterNodes) {
             String[] n = node.split(":");
             transportClient.addTransportAddress(new TransportAddress(InetAddress.getByName(n[0]), Integer.valueOf(n[1])));
         }
@@ -73,7 +79,7 @@ public class Clients implements Runner {
                             .put("index.number_of_shards", esIndex.shards())
                             .put("index.number_of_replicas", esIndex.replicas())
                     )
-                    .addMapping(StringUtil.isNull(esIndex.type()) ? esIndex.value() : esIndex.type(),
+                    .addMapping(Strings.isNull(esIndex.type()) ? esIndex.value() : esIndex.type(),
                             source, XContentType.JSON)
                     .get();
         }
